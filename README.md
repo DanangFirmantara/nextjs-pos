@@ -1,4 +1,4 @@
-# POS (Point of Sale) System
+ï»¿# POS (Point of Sale) System
 
 Aplikasi Point of Sale profesional dengan arsitektur monorepo yang terpisah antara Frontend dan Backend.
 
@@ -7,33 +7,34 @@ Aplikasi Point of Sale profesional dengan arsitektur monorepo yang terpisah anta
 ```
 pos-app/
 +-- frontend/                    # Next.js Frontend Application
-¦   +-- app/                     # App Router (Next.js 13+)
-¦   +-- src/
-¦   ¦   +-- components/
-¦   ¦   +-- context/
-¦   ¦   +-- hooks/
-¦   ¦   +-- types/
-¦   ¦   +-- utils/
-¦   +-- public/
-¦   +-- package.json
-¦   +-- tsconfig.json
-¦   +-- README.md
-¦
+Â¦   +-- app/                     # App Router (Next.js 13+)
+Â¦   +-- src/
+Â¦   Â¦   +-- components/
+Â¦   Â¦   +-- context/
+Â¦   Â¦   +-- hooks/
+Â¦   Â¦   +-- types/
+Â¦   Â¦   +-- utils/
+Â¦   +-- public/
+Â¦   +-- package.json
+Â¦   +-- tsconfig.json
+Â¦   +-- README.md
+Â¦   +-- CHANGELOG.md
+Â¦
 +-- backend/                     # Spring Boot Backend API
     +-- src/
-    ¦   +-- main/
-    ¦   ¦   +-- java/com/pos/
-    ¦   ¦   ¦   +-- config/      # Configuration classes
-    ¦   ¦   ¦   +-- controller/  # REST Controllers
-    ¦   ¦   ¦   +-- service/     # Business Logic
-    ¦   ¦   ¦   +-- repository/  # Data Access
-    ¦   ¦   ¦   +-- entity/      # JPA Entities
-    ¦   ¦   ¦   +-- dto/         # Data Transfer Objects
-    ¦   ¦   ¦   +-- exception/   # Exception Handlers
-    ¦   ¦   ¦   +-- util/        # Utilities
-    ¦   ¦   +-- resources/
-    ¦   ¦       +-- application.yml
-    ¦   +-- test/
+    Â¦   +-- main/
+    Â¦   Â¦   +-- java/com/pos/
+    Â¦   Â¦   Â¦   +-- config/      # Configuration classes
+    Â¦   Â¦   Â¦   +-- controller/  # REST Controllers
+    Â¦   Â¦   Â¦   +-- service/     # Business Logic
+    Â¦   Â¦   Â¦   +-- repository/  # Data Access
+    Â¦   Â¦   Â¦   +-- entity/      # JPA Entities
+    Â¦   Â¦   Â¦   +-- dto/         # Data Transfer Objects
+    Â¦   Â¦   Â¦   +-- exception/   # Exception Handlers
+    Â¦   Â¦   Â¦   +-- util/        # Utilities
+    Â¦   Â¦   +-- resources/
+    Â¦   Â¦       +-- application.yml
+    Â¦   +-- test/
     +-- pom.xml                  # Maven Configuration
     +-- docker-compose.yml       # PostgreSQL Setup
     +-- .env.example             # Environment Template

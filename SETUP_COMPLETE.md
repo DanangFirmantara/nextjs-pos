@@ -27,21 +27,21 @@ backend/
 +-- src/main/java/com/pos/
     +-- PosBackendApplication.java   ?
     +-- config/
-    ¦   +-- CorsConfig.java          ?
-    ¦   +-- JpaConfig.java           ?
+    ï¿½   +-- CorsConfig.java          ?
+    ï¿½   +-- JpaConfig.java           ?
     +-- controller/
-    ¦   +-- AuthController.java      ?
+    ï¿½   +-- AuthController.java      ?
     +-- service/
-    ¦   +-- AuthService.java         ?
+    ï¿½   +-- AuthService.java         ?
     +-- repository/
-    ¦   +-- UserRepository.java      ?
+    ï¿½   +-- UserRepository.java      ?
     +-- entity/
-    ¦   +-- User.java                ?
+    ï¿½   +-- User.java                ?
     +-- dto/
-    ¦   +-- LoginRequest.java        ?
-    ¦   +-- LoginResponse.java       ?
+    ï¿½   +-- LoginRequest.java        ?
+    ï¿½   +-- LoginResponse.java       ?
     +-- exception/
-    ¦   +-- GlobalExceptionHandler.java ?
+    ï¿½   +-- GlobalExceptionHandler.java ?
     +-- util/
         +-- ApiResponse.java         ?
 ```
@@ -49,9 +49,11 @@ backend/
 ### Frontend - Next.js
 - Folder `nextjs-pos` sudah ada (tinggal rename menjadi `frontend`)
 - Semua file Next.js Anda sudah siap digunakan
+- `CHANGELOG.md` untuk mendokumentasikan perubahan frontend
 
 ### Root Project
 - `README.md` dengan dokumentasi lengkap di root folder
+- `CHANGELOG.md` dengan daftar perubahan project
 
 ---
 

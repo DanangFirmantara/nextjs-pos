@@ -4,49 +4,50 @@
 
 ```
 C:\Users\Administrator\OneDrive\Desktop\copilot\pos-app\
-¦
+ï¿½
 +-- ?? frontend/                    # Next.js Application (rename dari nextjs-pos)
-¦   +-- app/
-¦   +-- src/
-¦   +-- public/
-¦   +-- package.json
-¦   +-- tsconfig.json
-¦   +-- README.md
-¦
+ï¿½   +-- app/
+ï¿½   +-- src/
+ï¿½   +-- public/
+ï¿½   +-- package.json
+ï¿½   +-- tsconfig.json
+ï¿½   +-- README.md
+ï¿½
 +-- ?? backend/                     # Spring Boot Application (BARU)
-¦   +-- src/main/java/com/pos/
-¦   ¦   +-- PosBackendApplication.java    # Main entry point
-¦   ¦   +-- config/                       # Configuration classes
-¦   ¦   ¦   +-- CorsConfig.java
-¦   ¦   ¦   +-- JpaConfig.java
-¦   ¦   +-- controller/                   # REST Controllers
-¦   ¦   ¦   +-- AuthController.java
-¦   ¦   +-- service/                      # Business Logic
-¦   ¦   ¦   +-- AuthService.java
-¦   ¦   +-- repository/                   # Data Access Layer
-¦   ¦   ¦   +-- UserRepository.java
-¦   ¦   +-- entity/                       # JPA Entities
-¦   ¦   ¦   +-- User.java
-¦   ¦   +-- dto/                          # Data Transfer Objects
-¦   ¦   ¦   +-- LoginRequest.java
-¦   ¦   ¦   +-- LoginResponse.java
-¦   ¦   +-- exception/                    # Exception Handlers
-¦   ¦   ¦   +-- GlobalExceptionHandler.java
-¦   ¦   +-- util/                         # Utilities
-¦   ¦       +-- ApiResponse.java
-¦   +-- src/main/resources/
-¦   ¦   +-- application.yml               # Spring Boot configuration
-¦   ¦   +-- templates/                    # (optional) Email templates
-¦   +-- src/test/java/com/pos/           # Test classes
-¦   +-- pom.xml                           # Maven Configuration
-¦   +-- docker-compose.yml                # PostgreSQL Docker Setup
-¦   +-- .env.example                      # Environment Variables Template
-¦   +-- .gitignore                        # Git ignore rules
-¦   +-- README.md                         # Backend Documentation
-¦
+ï¿½   +-- src/main/java/com/pos/
+ï¿½   ï¿½   +-- PosBackendApplication.java    # Main entry point
+ï¿½   ï¿½   +-- config/                       # Configuration classes
+ï¿½   ï¿½   ï¿½   +-- CorsConfig.java
+ï¿½   ï¿½   ï¿½   +-- JpaConfig.java
+ï¿½   ï¿½   +-- controller/                   # REST Controllers
+ï¿½   ï¿½   ï¿½   +-- AuthController.java
+ï¿½   ï¿½   +-- service/                      # Business Logic
+ï¿½   ï¿½   ï¿½   +-- AuthService.java
+ï¿½   ï¿½   +-- repository/                   # Data Access Layer
+ï¿½   ï¿½   ï¿½   +-- UserRepository.java
+ï¿½   ï¿½   +-- entity/                       # JPA Entities
+ï¿½   ï¿½   ï¿½   +-- User.java
+ï¿½   ï¿½   +-- dto/                          # Data Transfer Objects
+ï¿½   ï¿½   ï¿½   +-- LoginRequest.java
+ï¿½   ï¿½   ï¿½   +-- LoginResponse.java
+ï¿½   ï¿½   +-- exception/                    # Exception Handlers
+ï¿½   ï¿½   ï¿½   +-- GlobalExceptionHandler.java
+ï¿½   ï¿½   +-- util/                         # Utilities
+ï¿½   ï¿½       +-- ApiResponse.java
+ï¿½   +-- src/main/resources/
+ï¿½   ï¿½   +-- application.yml               # Spring Boot configuration
+ï¿½   ï¿½   +-- templates/                    # (optional) Email templates
+ï¿½   +-- src/test/java/com/pos/           # Test classes
+ï¿½   +-- pom.xml                           # Maven Configuration
+ï¿½   +-- docker-compose.yml                # PostgreSQL Docker Setup
+ï¿½   +-- .env.example                      # Environment Variables Template
+ï¿½   +-- .gitignore                        # Git ignore rules
+ï¿½   +-- README.md                         # Backend Documentation
+ï¿½
 +-- ?? README.md                    # Main Project Documentation
 +-- ?? SETUP_COMPLETE.md            # Setup Guide & Next Steps
 +-- ?? INDEX.md                     # This file
++-- ?? CHANGELOG.md                 # Root Project Changelog
 
 ```
 
@@ -214,7 +215,7 @@ Frontend Request
 
 ### Backend
 - **Framework**: Spring Boot 3.2.2
-- **Language**: Java 17
+- **Language**: Java 21
 - **Database**: PostgreSQL
 - **ORM**: Hibernate (via Spring Data JPA)
 - **Security**: Spring Security + JWT
