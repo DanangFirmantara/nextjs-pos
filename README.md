@@ -1,316 +1,208 @@
-﻿# 🚀 POS System - Professional Next.js Application
+# POS (Point of Sale) System
 
-Aplikasi Point of Sale (POS) modern yang dibangun dengan Next.js 14, Material-UI, dan Tailwind CSS. Dilengkapi dengan authentication, dashboard, dan UI yang responsif.
+Aplikasi Point of Sale profesional dengan arsitektur monorepo yang terpisah antara Frontend dan Backend.
 
-## ✨ Fitur Utama
+## Project Structure
 
-✅ **Authentication System**
-- Login dengan email & password
-- Session management dengan localStorage
-- Protected routes untuk dashboard
-- Auto-redirect berdasarkan authentication status
+```
+pos-app/
++-- frontend/                    # Next.js Frontend Application
+�   +-- app/                     # App Router (Next.js 13+)
+�   +-- src/
+�   �   +-- components/
+�   �   +-- context/
+�   �   +-- hooks/
+�   �   +-- types/
+�   �   +-- utils/
+�   +-- public/
+�   +-- package.json
+�   +-- tsconfig.json
+�   +-- README.md
+�
++-- backend/                     # Spring Boot Backend API
+    +-- src/
+    �   +-- main/
+    �   �   +-- java/com/pos/
+    �   �   �   +-- config/      # Configuration classes
+    �   �   �   +-- controller/  # REST Controllers
+    �   �   �   +-- service/     # Business Logic
+    �   �   �   +-- repository/  # Data Access
+    �   �   �   +-- entity/      # JPA Entities
+    �   �   �   +-- dto/         # Data Transfer Objects
+    �   �   �   +-- exception/   # Exception Handlers
+    �   �   �   +-- util/        # Utilities
+    �   �   +-- resources/
+    �   �       +-- application.yml
+    �   +-- test/
+    +-- pom.xml                  # Maven Configuration
+    +-- docker-compose.yml       # PostgreSQL Setup
+    +-- .env.example             # Environment Template
+    +-- .gitignore
+    +-- README.md
+```
 
-✅ **Beautiful Dashboard**
-- Statistics cards dengan gradient backgrounds
-- Recent transactions list
-- Quick action buttons
-- Responsive grid layout
+## Quick Start
 
-✅ **Modern UI/UX**
-- Material-UI components
-- Tailwind CSS styling
-- Gradient backgrounds
-- Smooth animations
+### Frontend Setup
 
-✅ **Professional Structure**
-- Organized folder structure
-- TypeScript support
-- Reusable components
-- Custom hooks
-- Type-safe context
-
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js 14 (App Router)
-- **UI Libraries**: Material-UI (MUI v5), Tailwind CSS
-- **Language**: TypeScript
-- **State Management**: React Context API
-- **Styling**: Emotion (MUI), Tailwind CSS
-- **Package Manager**: npm
-
-## 📁 Project Structure
-
-\\\
-src/
-├── app/                    # Next.js app directory
-│   ├── page.tsx           # Root page (redirect logic)
-│   ├── layout.tsx         # Global layout
-│   ├── globals.css        # Global styles
-│   ├── login/
-│   │   └── page.tsx       # Login page
-│   └── dashboard/
-│       └── page.tsx       # Dashboard page
-├── components/            # Reusable React components
-│   └── Navbar.tsx         # Navigation bar
-├── context/              # React Context providers
-│   └── AuthContext.tsx    # Authentication context
-├── hooks/                # Custom React hooks
-│   └── useProtectedRoute.ts
-├── types/                # TypeScript type definitions
-│   └── auth.ts           # Auth related types
-├── utils/                # Utility functions
-├── lib/                  # Library functions
-├── constants/            # App constants
-└── public/               # Static assets
-\\\
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- npm atau yarn
-
-### Installation
-
-1. **Clone atau navigate ke project folder**
-   \\\ash
-   cd nextjs-pos
-   \\\
-
-2. **Install dependencies**
-   \\\ash
-   npm install
-   \\\
-
-3. **Run development server**
-   \\\ash
-   npm run dev
-   \\\
-
-4. **Open browser dan navigate ke**
-   \\\
-   http://localhost:3000
-   \\\
-
-## 📖 Usage
-
-### Login ke Aplikasi
-
-Gunakan credentials dibawah untuk testing:
-
-**User biasa:**
-- Email: \user@example.com\
-- Password: \nything\
-
-**Admin user:**
-- Email: \dmin@example.com\
-- Password: \nything\
-
-> 🔐 Demo mode menerima password apapun. Pada production, implementasi proper authentication backend.
-
-### Navigation
-
-1. **Root Path (\/\)**
-   - Redirect ke login jika belum authenticated
-   - Redirect ke dashboard jika sudah authenticated
-
-2. **Login Page (\/login\)**
-   - Form login dengan validation
-   - Error handling
-   - Auto-redirect ke dashboard setelah login
-
-3. **Dashboard (\/dashboard\)**
-   - Protected route - hanya bisa diakses jika authenticated
-   - Stats cards
-   - Recent transactions
-   - Quick actions
-
-## 🔐 Authentication Flow
-
-\\\
-User Input Email & Password
-         ↓
-    Validation
-         ↓
-  API Call (demo)
-         ↓
-Store User in Context
-         ↓
-Save to localStorage
-         ↓
-Redirect to Dashboard
-\\\
-
-### Logout
-
-Tekan avatar di top-right navbar → klik "Logout"
-
-\\\
-Click Avatar
-    ↓
-Select Logout
-    ↓
-Clear Context & localStorage
-    ↓
-Redirect to Login
-\\\
-
-## 📝 API Integration (Future)
-
-Untuk production, update fungsi login di \src/context/AuthContext.tsx\:
-
-\\\	ypescript
-const login = async (email: string, password: string): Promise<void> => {
-  setIsLoading(true);
-  try {
-    // Replace dengan real API call
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    
-    if (!response.ok) throw new Error('Login failed');
-    
-    const userData = await response.json();
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-  } finally {
-    setIsLoading(false);
-  }
-};
-\\\
-
-## 🎨 Customization
-
-### Colors & Theme
-
-Update Material-UI theme di components atau global styles:
-
-\\\	ypescript
-// Di Navbar.tsx atau component lain
-sx={{ backgroundColor: '#1976d2' }}  // Change color
-sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-\\\
-
-### Dashboard Statistics
-
-Edit items di \src/app/dashboard/page.tsx\ Grid container.
-
-### Tailwind Configuration
-
-Customize di \	ailwind.config.ts\:
-
-\\\javascript
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        primary: '#667eea',
-      },
-    },
-  },
-};
-\\\
-
-## 🧪 Development Commands
-
-\\\ash
-# Development server
+```bash
+cd frontend
+npm install
 npm run dev
+```
 
-# Build untuk production
-npm run build
+Access at: http://localhost:3000
 
-# Run production build
-npm run start
+### Backend Setup
 
-# Lint code
-npm run lint
+```bash
+cd backend
 
-# Type check
-npx tsc --noEmit
-\\\
+# 1. Start PostgreSQL
+docker-compose up -d
 
-## 📦 Build untuk Production
+# 2. Create .env file
+cp .env.example .env
 
-\\\ash
-npm run build
-npm run start
-\\\
+# 3. Build project
+mvn clean install
 
-Production build akan optimize semua assets dan siap untuk deployment.
+# 4. Run application
+mvn spring-boot:run
+```
 
-## 🚀 Deployment
+Access at: http://localhost:8080/api/v1
 
-### Vercel (Recommended)
+## Architecture
 
-\\\ash
-# Install Vercel CLI
-npm i -g vercel
+### Frontend (Next.js)
+- **Framework**: Next.js 14+
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **State Management**: Context API / Zustand
+- **API Communication**: Fetch API / Axios
 
-# Deploy
-vercel
-\\\
+### Backend (Spring Boot)
+- **Framework**: Spring Boot 3.2.2
+- **Language**: Java 17
+- **Database**: PostgreSQL
+- **ORM**: Hibernate/Spring Data JPA
+- **Security**: Spring Security + JWT
+- **API**: RESTful with proper error handling
 
-### Other Platforms
+## Key Features
 
-Build project terlebih dahulu:
+- ? User Authentication (Frontend + Backend)
+- ? JWT Token-based Authorization
+- ? PostgreSQL Database Integration
+- ? CORS Configuration for Frontend-Backend Communication
+- ? Docker Support for Database
+- ? Professional Project Structure
+- ? Environment-based Configuration
+- ? Global Exception Handling
 
-\\\ash
-npm run build
-\\\
+## Development Workflow
 
-Kemudian deploy folder \.next\ ke platform pilihan Anda.
+1. **Frontend Development**
+   - Design UI components with Next.js
+   - Implement state management
+   - Create API client utilities
+   - Handle authentication flow
 
-## 🔒 Security Notes
+2. **Backend Development**
+   - Create entities and repositories
+   - Implement business logic in services
+   - Build REST controllers
+   - Add validation and exception handling
 
-1. **Authentication**: Saat ini menggunakan localStorage. Untuk production, gunakan HttpOnly cookies dengan secure backend.
+3. **Database**
+   - Start PostgreSQL: `docker-compose up -d`
+   - Access pgAdmin: http://localhost:5050
+   - Create migrations as needed
 
-2. **Credentials**: Jangan hardcode credentials di frontend. Implementasis backend authentication proper.
+## Environment Configuration
 
-3. **Sensitive Data**: Jangan expose API keys atau sensitive info di CLIENT_SIDE code.
+### Backend (.env)
+```
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=pos_db
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+JWT_SECRET=your-secret-key
+SERVER_PORT=8080
+APP_ENV=dev
+```
 
-4. **HTTPS**: Selalu gunakan HTTPS di production.
+## API Documentation
 
-5. **CORS**: Configure CORS properly di backend.
+### Health Check
+```bash
+GET http://localhost:8080/api/v1/auth/health
+```
 
-## 🐛 Troubleshooting
+### Authentication Endpoints
+- `POST /api/v1/auth/login` - User login
+- `POST /api/v1/auth/logout` - User logout
 
-### Port 3000 sudah digunakan
-\\\ash
-npm run dev -- -p 3001
-\\\
+(More endpoints to be added)
 
-### Build error dengan Material-UI
-\\\ash
-npm install --save-exact @mui/material@latest
-\\\
+## Common Commands
 
-### Import path tidak working
-- Pastikan tsconfig.json path alias sudah benar
-- Restart dev server
+### Frontend
+```bash
+cd frontend
+npm run dev      # Development server
+npm run build    # Production build
+npm test         # Run tests
+npm run lint     # Run linter
+```
 
-## 📚 Useful Resources
+### Backend
+```bash
+cd backend
+mvn spring-boot:run   # Run application
+mvn clean package     # Build JAR
+mvn test              # Run tests
+```
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Material-UI Docs](https://mui.com/material-ui/getting-started/)
-- [Tailwind CSS Docs](https://tailwindcss.com/docs)
-- [React Documentation](https://react.dev)
+### Docker
+```bash
+# Start services
+docker-compose up -d
 
-## 📞 Support
+# Stop services
+docker-compose down
 
-Untuk issues atau pertanyaan:
-1. Check existing issues
-2. Create new issue dengan detail
-3. Include error messages dan screenshots
+# View logs
+docker-compose logs -f postgres
+```
 
-## 📄 License
+## Troubleshooting
 
-MIT License - Feel free to use ini project untuk keperluan Anda.
+### Port Conflicts
+- Frontend: Change port in `next.config.ts`
+- Backend: Change `server.port` in `application.yml`
+
+### Database Issues
+- Ensure Docker is running
+- Check PostgreSQL container: `docker ps`
+- Reset database: `docker-compose down -v && docker-compose up -d`
+
+### CORS Issues
+- Update `CorsConfig.java` in backend
+- Ensure frontend URL is in allowed origins
+
+## Next Steps
+
+1. Implement authentication endpoints
+2. Create database schema and models
+3. Build business logic services
+4. Develop frontend pages and components
+5. Integrate frontend with backend APIs
+6. Add unit and integration tests
+7. Deploy to production
 
 ---
 
-**Happy Coding! 🎉**
-
-Dibuat dengan ❤️ menggunakan Next.js 14, Material-UI, dan Tailwind CSS.
+Developed with ?? using Next.js & Spring Boot
