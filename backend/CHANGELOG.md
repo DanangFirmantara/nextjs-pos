@@ -55,6 +55,15 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ### Security
 - Tambah @JsonIgnore pada field password (vpassword) di entity Users
 
+
+## [1.0.0] - 2026-03-03
+
+### Other
+- integrasi backend to db
+- dokumentasi project
+- integrasi postgress di backend dan testing frontend
+- init new git
+
 ---
 
 ## [1.0.0] - 2026-02-26 23:15
@@ -100,3 +109,4 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 1. Sebelum push ke GitHub, catat semua perubahan di bagian [Unreleased]
 2. Setelah push, pindahkan ke versi baru dengan tanggal
 3. Commit file ini bersama dengan perubahan lainnya
+4. jika perubahan yang terjadi besar maka naikkan versi angka paling depan, begitupun seterusnya

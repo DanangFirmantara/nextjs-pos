@@ -1,0 +1,50 @@
+name: Update CHANGELOG
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run Changelog Update Script
+        run: node scripts/update-changelog.js
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet backend/CHANGELOG.md frontend/CHANGELOG.md; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and Push CHANGELOG updates
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git add backend/CHANGELOG.md frontend/CHANGELOG.md
+          git commit -m "chore: auto-update CHANGELOG.md [skip ci]"
+          git push
