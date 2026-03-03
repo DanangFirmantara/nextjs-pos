@@ -80,6 +80,18 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 - integrasi postgress di backend dan testing frontend
 - init new git
 
+
+## [1.0.0] - 2026-03-03
+
+### Added
+- fitur baru
+
+### Other
+- integrasi backend to db
+- dokumentasi project
+- integrasi postgress di backend dan testing frontend
+- init new git
+
 ## [1.0.0] - 2026-03-03
 
 ### Other
