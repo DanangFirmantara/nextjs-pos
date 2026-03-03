@@ -7,16 +7,53 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ## [Unreleased] - Perubahan yang belum di-push
 
 ### Added (Ditambahkan)
-- 
+- Entity baru dari DDL PostgreSQL:
+  - MasterModule (master_module)
+  - MasterRole (master_role)
+  - RoleModuleMapping (role_module_mapping)
+  - UserRoleMapping (user_role_mapping)
+  - Users (users)
+- Repository untuk setiap entity:
+  - MasterModuleRepository
+  - MasterRoleRepository
+  - RoleModuleMappingRepository
+  - UserRoleMappingRepository
+  - UsersRepository
+- Service layer dengan partial update support:
+  - MasterModuleService
+  - MasterRoleService
+  - RoleModuleMappingService
+  - UserRoleMappingService
+  - UsersService
+- Controller CRUD lengkap untuk setiap entity:
+  - MasterModuleController (/api/master-modules)
+  - MasterRoleController (/api/master-roles)
+  - RoleModuleMappingController (/api/role-module-mappings)
+  - UserRoleMappingController (/api/user-role-mappings)
+  - UsersController (/api/users)
+- Endpoint PATCH untuk partial update di semua controller
+- HealthService dan HealthController untuk health check:
+  - GET /api/health - Simple health check
+  - GET /api/health/detail - Detailed health dengan system info
+  - GET /api/health/ping - Simple ping endpoint
+- CODE_REFERENCE.md sebagai panduan standar coding untuk backend
+- Auto-generate UUID via @PrePersist di semua entity
 
 ### Changed (Diubah)
-- 
+- Refactor controller untuk menggunakan service layer (bukan langsung repository)
+- Update endpoint getById agar return single object (bukan ResponseEntity/Optional)
+- Update application.yml configuration
 
 ### Fixed (Diperbaiki)
-- 
+- Fix BOM (Byte Order Mark) pada file Java baru
+- Fix @GeneratedValue error untuk UUID (pindah ke @PrePersist)
+- Fix schema validation mismatch antara entity dan database
 
 ### Removed (Dihapus)
 - 
+
+### Security
+- Tambah @JsonIgnore pada field password (vpassword) di entity Users
 
 ---
 
