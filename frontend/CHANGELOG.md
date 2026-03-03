@@ -19,7 +19,6 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ### Removed (Dihapus)
 - 
 
-
 ## [1.0.0] - 2026-03-03
 
 ### Other

@@ -4,8 +4,22 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 
 ---
 
-## [Unreleased] - Perubahan yang belum di-push
+## [Unreleased]
 
+### Added (Ditambahkan)
+- 
+
+### Changed (Diubah)
+- 
+
+### Fixed (Diperbaiki)
+- 
+
+### Removed (Dihapus)
+- 
+
+
+## [1.2.0] - 2026-03-03
 ### Added (Ditambahkan)
 - Entity baru dari DDL PostgreSQL:
   - MasterModule (master_module)
@@ -55,6 +69,16 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ### Security
 - Tambah @JsonIgnore pada field password (vpassword) di entity Users
 
+## [1.1.0] - 2026-03-03
+
+### Added
+- fitur baru
+
+### Other
+- integrasi backend to db
+- dokumentasi project
+- integrasi postgress di backend dan testing frontend
+- init new git
 
 ## [1.0.0] - 2026-03-03
 

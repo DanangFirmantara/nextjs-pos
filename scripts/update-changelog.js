@@ -2,139 +2,162 @@
 
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
 
 const BACKEND_CHANGELOG = path.join(__dirname, "..", "backend", "CHANGELOG.md");
 const FRONTEND_CHANGELOG = path.join(__dirname, "..", "frontend", "CHANGELOG.md");
 
-function getNewCommits() {
-  try {
-    let command = "git log --format=\"%h|%s|%an\" -n 20";
-    try {
-      const lastTag = execSync("git describe --tags --abbrev=0", { encoding: "utf-8" }).trim();
-      command = `git log ${lastTag}..HEAD --format=\"%h|%s|%an\"`;
-    } catch (e) {
-      console.log("No tag found. Using last 20 commits...");
-    }
-    const output = execSync(command, { encoding: "utf-8" });
-    return output.split("\n").filter(line => line.trim()).map(line => {
-      const [hash, message, author] = line.split("|");
-      return { hash: hash?.trim() || "", message: message?.trim() || "", author: author?.trim() || "" };
-    }).filter(c => c.message);
-  } catch (error) {
-    console.error("Error getting git logs:", error.message);
-    return [];
-  }
-}
+// Template untuk Unreleased yang kosong
+const UNRELEASED_TEMPLATE = `## [Unreleased]
 
-function categorizeCommits(commits) {
-  const categories = { Added: [], Changed: [], Fixed: [], Removed: [], Other: [] };
-  commits.forEach(commit => {
-    const msg = commit.message.toLowerCase();
-    if (msg.startsWith("feat:") || msg.startsWith("add:")) categories.Added.push(commit);
-    else if (msg.startsWith("fix:") || msg.startsWith("bugfix:")) categories.Fixed.push(commit);
-    else if (msg.startsWith("refactor:") || msg.startsWith("change:")) categories.Changed.push(commit);
-    else if (msg.startsWith("remove:") || msg.startsWith("delete:")) categories.Removed.push(commit);
-    else categories.Other.push(commit);
+### Added (Ditambahkan)
+- 
+
+### Changed (Diubah)
+- 
+
+### Fixed (Diperbaiki)
+- 
+
+### Removed (Dihapus)
+- 
+`;
+
+// Baca versi terakhir dari file CHANGELOG
+function getLastVersionFromChangelog(content) {
+  const versionRegex = /^##\s*\[(\d+\.\d+\.\d+)\]/gm;
+  const matches = [...content.matchAll(versionRegex)];
+  
+  if (matches.length === 0) return null;
+  
+  // Ambil versi tertinggi
+  const versions = matches.map(m => m[1]);
+  versions.sort((a, b) => {
+    const [aMaj, aMin, aPat] = a.split(".").map(Number);
+    const [bMaj, bMin, bPat] = b.split(".").map(Number);
+    if (aMaj !== bMaj) return bMaj - aMaj;
+    if (aMin !== bMin) return bMin - aMin;
+    return bPat - aPat;
   });
-  return categories;
+  
+  return versions[0];
 }
 
-function generateContent(commits, version) {
-  const cat = categorizeCommits(commits);
-  const date = new Date().toISOString().split("T")[0];
-  let content = `## [${version}] - ${date}\n\n`;
-  if (cat.Added.length > 0) {
-    content += "### Added\n";
-    cat.Added.forEach(c => content += `- ${c.message.replace(/^(feat|add):\s*/i, "")}\n`);
-    content += "\n";
-  }
-  if (cat.Changed.length > 0) {
-    content += "### Changed\n";
-    cat.Changed.forEach(c => content += `- ${c.message.replace(/^(refactor|change):\s*/i, "")}\n`);
-    content += "\n";
-  }
-  if (cat.Fixed.length > 0) {
-    content += "### Fixed\n";
-    cat.Fixed.forEach(c => content += `- ${c.message.replace(/^(fix|bugfix):\s*/i, "")}\n`);
-    content += "\n";
-  }
-  if (cat.Removed.length > 0) {
-    content += "### Removed\n";
-    cat.Removed.forEach(c => content += `- ${c.message.replace(/^(remove|delete):\s*/i, "")}\n`);
-    content += "\n";
-  }
-  if (cat.Other.length > 0) {
-    content += "### Other\n";
-    cat.Other.forEach(c => content += `- ${c.message}\n`);
-    content += "\n";
-  }
-  return content;
+// Increment versi (minor by default, karena ini release)
+function incrementVersion(version) {
+  const [major, minor, patch] = version.split(".").map(Number);
+  return `${major}.${minor + 1}.0`;
 }
 
-function updateChangelog(filePath, newContent) {
+// Extract konten dari section Unreleased
+function extractUnreleasedContent(content) {
+  const lines = content.split("\n");
+  let inUnreleased = false;
+  let unreleasedLines = [];
+  let unreleasedStart = -1;
+  let unreleasedEnd = -1;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    
+    // Mulai section Unreleased
+    if (line.match(/^##\s*\[Unreleased\]/i)) {
+      inUnreleased = true;
+      unreleasedStart = i;
+      continue;
+    }
+    
+    // Akhir section Unreleased (ketemu ## berikutnya atau ---)
+    if (inUnreleased && (line.match(/^##\s*\[/) || line.trim() === "---")) {
+      unreleasedEnd = i;
+      break;
+    }
+    
+    if (inUnreleased) {
+      unreleasedLines.push(line);
+    }
+  }
+  
+  // Jika tidak ketemu akhir, sampai akhir file
+  if (inUnreleased && unreleasedEnd === -1) {
+    unreleasedEnd = lines.length;
+  }
+  
+  return {
+    content: unreleasedLines.join("\n"),
+    startLine: unreleasedStart,
+    endLine: unreleasedEnd,
+    lines: lines
+  };
+}
+
+// Cek apakah Unreleased punya konten yang meaningful
+function hasContent(unreleasedContent) {
+  // Hapus semua section headers dan cek apakah ada teks selain "-"
+  const cleaned = unreleasedContent
+    .replace(/^###.*$/gm, "")  // Hapus headers
+    .replace(/^\s*-\s*$/gm, "") // Hapus bullet kosong
+    .replace(/\s+/g, "")       // Hapus whitespace
+    .trim();
+  
+  return cleaned.length > 0;
+}
+
+function updateChangelog(filePath) {
   try {
-    const dir = path.dirname(filePath);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    
-    let fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf-8") : "# CHANGELOG\n\nSemua perubahan penting pada proyek ini akan didokumentasikan di file ini.\n\n---\n\n## [Unreleased]\n\n";
-    
-    const lines = fileContent.split("\n");
-    let insertIndex = -1;
-    
-    // Cari posisi SETELAH section [Unreleased] berakhir (sebelum ## berikutnya atau --- berikutnya)
-    let foundUnreleased = false;
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      
-      // Cari [Unreleased] section
-      if (line.match(/^##\s*\[Unreleased\]/i)) {
-        foundUnreleased = true;
-        continue;
-      }
-      
-      // Setelah menemukan Unreleased, cari section ## berikutnya atau ---
-      if (foundUnreleased) {
-        if (line.match(/^##\s*\[/) || line === "---") {
-          insertIndex = i;
-          break;
-        }
-      }
+    if (!fs.existsSync(filePath)) {
+      console.log(`File tidak ditemukan: ${filePath}`);
+      return false;
     }
     
-    // Jika tidak menemukan posisi yang tepat, cari setelah --- pertama
-    if (insertIndex === -1) {
-      for (let i = 0; i < lines.length; i++) {
-        if (lines[i].trim() === "---") {
-          // Cari ## [Unreleased] setelah ---
-          for (let j = i + 1; j < lines.length; j++) {
-            const line = lines[j].trim();
-            if (line.match(/^##\s*\[Unreleased\]/i)) {
-              // Cari akhir dari Unreleased section
-              for (let k = j + 1; k < lines.length; k++) {
-                if (lines[k].trim().match(/^##\s*\[/) || lines[k].trim() === "---") {
-                  insertIndex = k;
-                  break;
-                }
-              }
-              if (insertIndex === -1) insertIndex = lines.length;
-              break;
-            }
-          }
-          if (insertIndex !== -1) break;
-          // Jika tidak ada Unreleased, insert setelah ---
-          insertIndex = i + 2;
-          break;
-        }
-      }
+    const content = fs.readFileSync(filePath, "utf-8");
+    
+    // Extract Unreleased content
+    const unreleased = extractUnreleasedContent(content);
+    
+    if (unreleased.startLine === -1) {
+      console.log(`Tidak menemukan section [Unreleased] di ${filePath}`);
+      return false;
     }
     
-    if (insertIndex === -1) insertIndex = lines.length;
+    // Cek apakah ada konten
+    if (!hasContent(unreleased.content)) {
+      console.log(`Section [Unreleased] kosong di ${filePath}, skip...`);
+      return false;
+    }
     
-    // Insert new content dengan separator
-    lines.splice(insertIndex, 0, "", newContent.trim(), "");
+    // Dapatkan versi baru
+    const lastVersion = getLastVersionFromChangelog(content) || "0.0.0";
+    const newVersion = incrementVersion(lastVersion);
+    const date = new Date().toISOString().split("T")[0];
     
-    fs.writeFileSync(filePath, lines.join("\n"), "utf-8");
+    console.log(`${path.basename(filePath)}: ${lastVersion} -> ${newVersion}`);
+    
+    // Buat section versi baru dari konten Unreleased
+    const newVersionSection = `## [${newVersion}] - ${date}\n${unreleased.content.trim()}`;
+    
+    // Rebuild file:
+    // 1. Bagian sebelum Unreleased
+    // 2. Unreleased template kosong
+    // 3. Section versi baru
+    // 4. Bagian setelah Unreleased (versi lama)
+    
+    const lines = unreleased.lines;
+    const beforeUnreleased = lines.slice(0, unreleased.startLine).join("\n");
+    const afterUnreleased = lines.slice(unreleased.endLine).join("\n");
+    
+    const newContent = [
+      beforeUnreleased,
+      UNRELEASED_TEMPLATE,
+      "",
+      newVersionSection,
+      "",
+      afterUnreleased
+    ].join("\n");
+    
+    // Bersihkan multiple blank lines
+    const cleanedContent = newContent.replace(/\n{4,}/g, "\n\n\n");
+    
+    fs.writeFileSync(filePath, cleanedContent, "utf-8");
     console.log(`Updated: ${filePath}`);
     return true;
   } catch (error) {
@@ -143,27 +166,30 @@ function updateChangelog(filePath, newContent) {
   }
 }
 
-function detectVersion() {
-  try {
-    const lastTag = execSync("git describe --tags --abbrev=0", { encoding: "utf-8" }).trim();
-    const match = lastTag.match(/v?(\d+)\.(\d+)\.(\d+)/);
-    if (match) return `${match[1]}.${match[2]}.${Number(match[3]) + 1}`;
-    return "1.0.0";
-  } catch (e) { return "1.0.0"; }
-}
-
 function main() {
-  console.log("Updating CHANGELOG.md files...\n");
-  const commits = getNewCommits();
-  if (commits.length === 0) { console.log("No commits to document."); return; }
-  console.log(`Found ${commits.length} commits\n`);
-  const version = detectVersion();
-  console.log(`Version: ${version}\n`);
-  const content = generateContent(commits, version);
-  console.log("Preview:\n" + "-".repeat(40) + "\n" + content + "-".repeat(40));
-  updateChangelog(BACKEND_CHANGELOG, content);
-  updateChangelog(FRONTEND_CHANGELOG, content);
-  console.log("\nCHANGELOG update completed!");
+  console.log("========================================");
+  console.log("  RELEASE: Memindahkan Unreleased ke Versi Baru");
+  console.log("========================================\n");
+  
+  let updated = false;
+  
+  // Update backend CHANGELOG
+  if (updateChangelog(BACKEND_CHANGELOG)) {
+    updated = true;
+  }
+  
+  // Update frontend CHANGELOG
+  if (updateChangelog(FRONTEND_CHANGELOG)) {
+    updated = true;
+  }
+  
+  if (updated) {
+    console.log("\n? CHANGELOG berhasil diupdate!");
+    console.log("   - Konten [Unreleased] dipindahkan ke versi baru");
+    console.log("   - Section [Unreleased] dikosongkan");
+  } else {
+    console.log("\n??  Tidak ada perubahan. Pastikan section [Unreleased] berisi konten.");
+  }
 }
 
 main();
