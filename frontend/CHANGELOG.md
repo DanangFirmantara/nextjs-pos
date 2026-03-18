@@ -4,8 +4,22 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 
 ---
 
-## [Unreleased] - Perubahan yang belum di-push
+## [Unreleased]
 
+### Added (Ditambahkan)
+- 
+
+### Changed (Diubah)
+- 
+
+### Fixed (Diperbaiki)
+- 
+
+### Removed (Dihapus)
+- 
+
+
+## [1.1.0] - 2026-03-18
 ### Added (Ditambahkan)
 - Context global untuk kasir (KasirContext) agar ListMenu dan RingkasanPembayaran saling terhubung
 - Toast notifikasi untuk aksi tambah/edit/hapus barang dan kasir
