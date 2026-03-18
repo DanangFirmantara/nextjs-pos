@@ -7,7 +7,41 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ## [Unreleased]
 
 ### Added (Ditambahkan)
+-
+
+### Changed (Diubah)
 - 
+
+### Fixed (Diperbaiki)
+- 
+
+### Removed (Dihapus)
+- 
+
+## [1.3.0] - 2026-03-18
+### Added (Ditambahkan)
+ - Entity baru dari DDL table di moonlightpediadb:
+   - MasterMenu (master_menu) - Menu/Produk dengan kategori, harga jual beli, stock
+   - TrxMenu (trx_menu) - Transaksi penjualan menu
+   - TrxMenuDetail (trx_menu_detail) - Detail item dalam transaksi penjualan
+   - TrxPengeluaran (trx_pengeluaran) - Transaksi pengeluaran
+ - Repository untuk setiap entity baru:
+   - MasterMenuRepository
+   - TrxMenuRepository
+   - TrxMenuDetailRepository
+   - TrxPengeluaranRepository
+ - Service layer dengan partial update support:
+   - MasterMenuService
+   - TrxMenuService
+   - TrxMenuDetailService
+   - TrxPengeluaranService
+ - Controller CRUD lengkap untuk setiap entity baru:
+   - MasterMenuController (/api/master-menus)
+   - TrxMenuController (/api/trx-menus)
+   - TrxMenuDetailController (/api/trx-menu-details)
+   - TrxPengeluaranController (/api/trx-pengeluarans)
+ - Endpoint PATCH untuk partial update di semua controller baru
+ - Auto-generate UUID via @PrePersist di semua entity baru
 
 ### Changed (Diubah)
 - 

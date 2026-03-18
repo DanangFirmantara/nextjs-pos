@@ -7,6 +7,21 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ## [Unreleased] - Perubahan yang belum di-push
 
 ### Added (Ditambahkan)
+-
+
+### Changed (Diubah)
+-
+
+### Fixed (Diperbaiki)
+-
+
+### Removed (Dihapus)
+-
+
+---
+
+## [1.2.0] - 2026-03-18
+### Added (Ditambahkan)
 - Context global untuk kasir (KasirContext) agar ListMenu dan RingkasanPembayaran saling terhubung
 - Toast notifikasi untuk aksi tambah/edit/hapus barang dan kasir
 - Modal pembayaran kasir dengan quick amount, metode, dan cetak ulang
@@ -29,9 +44,7 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ### Removed (Dihapus)
 - Kode inline yang tidak mengikuti slicing kasir (semua page kini pakai pattern komponen terpisah)
 
----
-
-## [1.0.0] - 2026-03-03
+## [1.1.0] - 2026-03-03
 
 ### Other
 - integrasi backend to db
