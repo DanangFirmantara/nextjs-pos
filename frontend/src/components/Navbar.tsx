@@ -1,83 +1,51 @@
 ﻿'use client';
 
-import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, Avatar, Menu, MenuItem } from '@mui/material';
-import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { Bell, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export const Navbar: React.FC = () => {
-  const { user, logout, isAuthenticated } = useAuth();
-  const router = useRouter();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+export default function Navbar() {
+  const [time, setTime] = useState(new Date());
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    logout();
-    handleMenuClose();
-    router.push('/login');
-  };
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
+    return () => clearInterval(interval);
+  }, []);
+  
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#1976d2' }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-              cursor: 'pointer',
-              letterSpacing: '0.5px',
-            }}
-            onClick={() => router.push('/dashboard')}
-          >
-            POS System
-          </Typography>
-        </Box>
-
-        {user && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2" sx={{ color: '#fff' }}>
-              {user.name}
-            </Typography>
-            <Box onClick={handleMenuOpen} sx={{ cursor: 'pointer' }}>
-              <Avatar
-                sx={{
-                  width: 36,
-                  height: 36,
-                  backgroundColor: '#ff9800',
-                  fontSize: '0.9rem',
-                  fontWeight: 'bold',
-                }}
-              >
-                {user.name.charAt(0).toUpperCase()}
-              </Avatar>
-            </Box>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={() => router.push('/profile')}>
-                Profile
-              </MenuItem>
-              <MenuItem onClick={handleLogout} sx={{ color: '#d32f2f' }}>
-                Logout
-              </MenuItem>
-            </Menu>
-          </Box>
-        )}
-      </Toolbar>
-    </AppBar>
+    <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
+      <div>
+        <h1 className="font-semibold text-lg text-gray-800">Kasir</h1>
+        <span className="text-xs text-gray-500">Toko Sumber Rezeki</span>
+      </div>
+      <div className="flex items-center gap-6">
+        <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <Bell className="w-5 h-5 text-gray-600" />
+          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <div className="flex flex-col items-end">
+          <span className="text-xs text-gray-500">Waktu</span>
+          <span className="font-medium text-sm text-gray-700">
+            {time.toLocaleString("en-GB", {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: false
+            })}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+          <span className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center font-bold text-white text-sm">
+            A
+          </span>
+          <div className="flex flex-col">
+            <span className="text-xs text-gray-600">Akbar Hidayat</span>
+            <span className="text-xs text-gray-500">Kasir</span>
+          </div>
+        </div>
+      </div>
+    </header>
   );
-};
+}

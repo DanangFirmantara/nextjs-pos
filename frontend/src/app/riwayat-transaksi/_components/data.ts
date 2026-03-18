@@ -1,0 +1,56 @@
+﻿import { Transaksi } from "./types";
+
+export const DUMMY: Transaksi[] = [
+  {
+    id: 1,
+    noTransaksi: "TRX-2025-001",
+    tanggal: "22/12/2025 12:00",
+    kasir: "Akbar Hidayat",
+    totalItem: 20,
+    totalPembayaran: 5000,
+    ppn: 0,
+    labaKotor: 2000,
+    metodeBayar: "Tunai",
+    status: "Lunas",
+    bayar: 10000,
+    kembalian: 5000,
+    items: [
+      { nama: "Air Mineral 600ml", qty: 1, harga: 5000, subtotal: 5000 },
+    ],
+  },
+  {
+    id: 2,
+    noTransaksi: "TRX-2025-002",
+    tanggal: "22/12/2025 14:00",
+    kasir: "Akbar Hidayat",
+    totalItem: 20,
+    totalPembayaran: 8000,
+    ppn: 0,
+    labaKotor: 4000,
+    metodeBayar: "QRIS",
+    status: "Lunas",
+    bayar: 8000,
+    kembalian: 0,
+    items: [
+      { nama: "Es Teh Jumbo", qty: 1, harga: 8000, subtotal: 8000 },
+    ],
+  },
+  {
+    id: 3,
+    noTransaksi: "TRX-2025-003",
+    tanggal: "22/12/2025 14:55",
+    kasir: "Akbar Hidayat",
+    totalItem: 20,
+    totalPembayaran: 37740,
+    ppn: 3740,
+    labaKotor: 8000,
+    metodeBayar: "QRIS",
+    status: "Lunas",
+    bayar: 50000,
+    kembalian: 12260,
+    items: [
+      { nama: "Mie Goreng Telur + Sosis + Bakso", qty: 1, harga: 18000, subtotal: 18000 },
+      { nama: "Ocha 500ml",                       qty: 2, harga: 8000,  subtotal: 16000 },
+    ],
+  },
+];
