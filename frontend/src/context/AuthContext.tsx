@@ -18,7 +18,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setUser(JSON.parse(storedUser));
         }
       } catch (error) {
-        console.error('Error checking auth:', error);
+        // Auth check error
       } finally {
         setIsLoading(false);
       }

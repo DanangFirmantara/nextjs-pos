@@ -2,6 +2,7 @@ package com.pos.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -11,7 +12,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonPropertyOrder({"id", "guid", "createdAt", "createdBy", "updatedAt", "updatedBy", "vusername", "vpassword", "bisActive", "bisDelete"})
 public class Users {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -51,5 +54,67 @@ public class Users {
         if (this.guid == null) {
             this.guid = UUID.randomUUID();
         }
+    }
+
+    // Manual getter/setter for Java 26 compatibility
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    public UUID getGuid() {
+        return guid;
+    }
+    public void setGuid(UUID guid) {
+        this.guid = guid;
+    }
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+    public Integer getCreatedBy() {
+        return createdBy;
+    }
+    public void setCreatedBy(Integer createdBy) {
+        this.createdBy = createdBy;
+    }
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    public Integer getUpdatedBy() {
+        return updatedBy;
+    }
+    public void setUpdatedBy(Integer updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+    public String getVusername() {
+        return vusername;
+    }
+    public void setVusername(String vusername) {
+        this.vusername = vusername;
+    }
+    public String getVpassword() {
+        return vpassword;
+    }
+    public void setVpassword(String vpassword) {
+        this.vpassword = vpassword;
+    }
+    public Boolean getBisActive() {
+        return bisActive;
+    }
+    public void setBisActive(Boolean bisActive) {
+        this.bisActive = bisActive;
+    }
+    public Boolean getBisDelete() {
+        return bisDelete;
+    }
+    public void setBisDelete(Boolean bisDelete) {
+        this.bisDelete = bisDelete;
     }
 }

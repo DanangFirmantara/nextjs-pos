@@ -31,7 +31,6 @@ export default function Sidebar() {
   const [dark, setDark] = useState(false);
   const router = useRouter();
   const path = usePathname();
-  console.log("Current path:", path);
 
   const handleNavigate = (path: string) => {
     router.push(path);

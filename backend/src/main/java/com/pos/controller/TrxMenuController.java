@@ -1,6 +1,7 @@
 package com.pos.controller;
 
 import com.pos.entity.TrxMenu;
+import com.pos.dto.TrxMenuCreateRequest;
 import com.pos.service.TrxMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,11 @@ public class TrxMenuController {
     @PostMapping
     public TrxMenu create(@RequestBody TrxMenu entity) {
         return service.create(entity);
+    }
+
+    @PostMapping("/with-details")
+    public TrxMenu createWithDetails(@RequestBody TrxMenuCreateRequest request) {
+        return service.createWithDetails(request);
     }
 
     @PutMapping("/{id}")

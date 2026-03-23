@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MasterRoleRepository extends JpaRepository<MasterRole, Integer> {
+	java.util.List<MasterRole> findAllByBisDeleteFalse(org.springframework.data.domain.Sort sort);
 }

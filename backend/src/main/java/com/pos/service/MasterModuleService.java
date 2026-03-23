@@ -5,6 +5,7 @@ import com.pos.repository.MasterModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class MasterModuleService {
@@ -12,7 +13,7 @@ public class MasterModuleService {
     private MasterModuleRepository repository;
 
     public List<MasterModule> getAll() {
-        return repository.findAll();
+        return repository.findAllByBisDeleteFalse(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public MasterModule getById(Integer id) {

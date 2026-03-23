@@ -1,7 +1,9 @@
+// File sudah dibersihkan dari duplikasi di luar deklarasi class
 package com.pos.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -11,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonPropertyOrder({"id", "guid", "createdAt", "createdBy", "updatedAt", "updatedBy", "vname", "vdesc", "ikategory", "kodeBarang", "ijenisSatuan", "hargaJual", "hargaBeli", "istock", "iminStock", "fileName", "fileType", "filePath", "bisDelete", "bisActive"})
 public class MasterMenu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -81,5 +84,109 @@ public class MasterMenu {
         if (this.guid == null) {
             this.guid = UUID.randomUUID();
         }
+    }
+
+    // Manual getter/setter untuk workaround error Lombok di Java 26
+    public String getKodeBarang() {
+        return kodeBarang;
+    }
+    public void setKodeBarang(String kodeBarang) {
+        this.kodeBarang = kodeBarang;
+    }
+    public String getVname() {
+        return vname;
+    }
+    public void setVname(String vname) {
+        this.vname = vname;
+    }
+    public String getVdesc() {
+        return vdesc;
+    }
+    public void setVdesc(String vdesc) {
+        this.vdesc = vdesc;
+    }
+    public Integer getIkategory() {
+        return ikategory;
+    }
+    public void setIkategory(Integer ikategory) {
+        this.ikategory = ikategory;
+    }
+    public Integer getIjenisSatuan() {
+        return ijenisSatuan;
+    }
+    public void setIjenisSatuan(Integer ijenisSatuan) {
+        this.ijenisSatuan = ijenisSatuan;
+    }
+    public Long getHargaJual() {
+        return hargaJual;
+    }
+    public void setHargaJual(Long hargaJual) {
+        this.hargaJual = hargaJual;
+    }
+    public Long getHargaBeli() {
+        return hargaBeli;
+    }
+    public void setHargaBeli(Long hargaBeli) {
+        this.hargaBeli = hargaBeli;
+    }
+    public Integer getIstock() {
+        return istock;
+    }
+    public void setIstock(Integer istock) {
+        this.istock = istock;
+    }
+    public Integer getIminStock() {
+        return iminStock;
+    }
+    public void setIminStock(Integer iminStock) {
+        this.iminStock = iminStock;
+    }
+    public String getFileName() {
+        return fileName;
+    }
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+    public String getFileType() {
+        return fileType;
+    }
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+    public String getFilePath() {
+        return filePath;
+    }
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+    public Boolean getBisDelete() {
+        return bisDelete;
+    }
+    public void setBisDelete(Boolean bisDelete) {
+        this.bisDelete = bisDelete;
+    }
+    public Boolean getBisActive() {
+        return bisActive;
+    }
+    public void setBisActive(Boolean bisActive) {
+        this.bisActive = bisActive;
+    }
+    public Integer getUpdatedBy() {
+        return updatedBy;
+    }
+    public void setUpdatedBy(Integer updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

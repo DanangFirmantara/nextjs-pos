@@ -28,18 +28,18 @@ public class MasterMenuController {
         return service.create(entity);
     }
 
-    @PutMapping("/{id}")
-    public MasterMenu update(@PathVariable Integer id, @RequestBody MasterMenu entity) {
-        return service.updateFull(id, entity);
-    }
+    // @PutMapping("/{id}")
+    // public MasterMenu update(@PathVariable Integer id, @RequestBody MasterMenu entity) {
+    //     return service.updateFull(id, entity);
+    // }
 
-    @PatchMapping("/{id}")
+    @PostMapping("/{id}")
     public MasterMenu partialUpdate(@PathVariable Integer id, @RequestBody MasterMenu updates) {
         return service.updatePartial(id, updates);
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        service.delete(id);
-    }
+    // @DeleteMapping("/{id}")
+    // public void delete(@PathVariable Integer id) {
+    //     service.delete(id);
+    // }
 }

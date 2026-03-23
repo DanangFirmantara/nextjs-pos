@@ -4,6 +4,21 @@ import { useRef } from "react";
 import { X, FileText } from "lucide-react";
 import { Pengeluaran, Kategori, KATEGORI_OPTIONS } from "./types";
 
+// Utility functions untuk format input harga dengan separator ribuan
+function formatNumberInput(value: string): string {
+  // Strip semua non-digit characters
+  const numericValue = value.replace(/\D/g, "");
+  if (!numericValue) return "";
+  // Format dengan separator ribuan (Indonesian format: dot for thousands)
+  return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function parseNumberInput(value: string): number {
+  // Remove all non-digit characters and convert to number
+  const numericValue = value.replace(/\D/g, "");
+  return numericValue ? Number(numericValue) : 0;
+}
+
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -78,8 +93,8 @@ export default function PengeluaranModal({ open, onClose, editTarget, form, setF
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Nominal pengeluaran (Rp) <span className="text-red-500">*</span>
             </label>
-            <input type="number" placeholder="Rp 0" value={form.nominal || ""}
-              onChange={(e) => setForm((f) => ({ ...f, nominal: Number(e.target.value) }))}
+            <input type="text" inputMode="numeric" placeholder="Rp 0" value={formatNumberInput(String(form.nominal || ""))}
+              onChange={(e) => { const numValue = parseNumberInput(e.target.value); setForm((f) => ({ ...f, nominal: numValue })); }}
               className={field} />
           </div>
 

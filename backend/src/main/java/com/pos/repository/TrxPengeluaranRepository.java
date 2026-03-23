@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TrxPengeluaranRepository extends JpaRepository<TrxPengeluaran, Integer> {
+	java.util.List<TrxPengeluaran> findAllByBisDeleteFalse(org.springframework.data.domain.Sort sort);
 }

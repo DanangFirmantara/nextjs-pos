@@ -5,6 +5,7 @@ import com.pos.repository.TrxPengeluaranRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class TrxPengeluaranService {
@@ -12,7 +13,7 @@ public class TrxPengeluaranService {
     private TrxPengeluaranRepository repository;
 
     public List<TrxPengeluaran> getAll() {
-        return repository.findAll();
+        return repository.findAllByBisDeleteFalse(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public TrxPengeluaran getById(Integer id) {

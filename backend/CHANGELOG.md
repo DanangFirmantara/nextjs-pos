@@ -5,9 +5,8 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ---
 
 ## [Unreleased]
-
 ### Added (Ditambahkan)
--
+- 
 
 ### Changed (Diubah)
 - 
@@ -18,7 +17,27 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ### Removed (Dihapus)
 - 
 
-## [1.3.0] - 2026-03-18
+## [1.6.0] - 2026-03-24
+### Added (Ditambahkan)
+- CRUD MasterReferensi: controller, service, repository, dan entity MasterReferensi.
+- DTO baru: MasterReferensiDto, TrxMenuCreateRequest, TrxMenuDetailRequest untuk komunikasi API.
+- Endpoint transaksi menu: create transaksi menu dengan detail dan auto-update stok barang.
+- Test unit: TrxMenuServiceTest untuk validasi createWithDetails dan stok.
+- Manual getter/setter di entity dan DTO untuk kompatibilitas Java 26 (mengurangi penggunaan Lombok).
+- Repository: filter data dengan bisDelete=false.
+- Perubahan DDL dan struktur tabel di task.md.
+
+### Changed (Diubah)
+- PATCH diganti POST untuk update parsial pada beberapa controller.
+- ApiResponse builder manual (tanpa Lombok).
+
+### Fixed (Diperbaiki)
+- Perbaikan validasi pada service dan repository.
+
+### Removed (Dihapus)
+- Penggunaan Lombok pada entity dan DTO yang tidak kompatibel dengan Java 26.
+
+## [1.5.0] - 2026-03-18
 ### Added (Ditambahkan)
  - Entity baru dari DDL table di moonlightpediadb:
    - MasterMenu (master_menu) - Menu/Produk dengan kategori, harga jual beli, stock
@@ -53,7 +72,7 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 - 
 
 
-## [1.2.0] - 2026-03-03
+## [1.4.0] - 2026-03-03
 ### Added (Ditambahkan)
 - Entity baru dari DDL PostgreSQL:
   - MasterModule (master_module)
@@ -103,30 +122,30 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ### Security
 - Tambah @JsonIgnore pada field password (vpassword) di entity Users
 
+## [1.3.0] - 2026-03-03
+
+### Added
+- fitur baru
+
+### Other
+- integrasi backend to db
+- dokumentasi project
+- integrasi postgress di backend dan testing frontend
+- init new git
+
+
+## [1.2.0] - 2026-03-03
+
+### Added
+- fitur baru
+
+### Other
+- integrasi backend to db
+- dokumentasi project
+- integrasi postgress di backend dan testing frontend
+- init new git
+
 ## [1.1.0] - 2026-03-03
-
-### Added
-- fitur baru
-
-### Other
-- integrasi backend to db
-- dokumentasi project
-- integrasi postgress di backend dan testing frontend
-- init new git
-
-
-## [1.0.0] - 2026-03-03
-
-### Added
-- fitur baru
-
-### Other
-- integrasi backend to db
-- dokumentasi project
-- integrasi postgress di backend dan testing frontend
-- init new git
-
-## [1.0.0] - 2026-03-03
 
 ### Other
 - integrasi backend to db

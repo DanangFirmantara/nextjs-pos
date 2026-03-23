@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRoleMappingRepository extends JpaRepository<UserRoleMapping, Integer> {
+	java.util.List<UserRoleMapping> findAllByBisDeleteFalse(org.springframework.data.domain.Sort sort);
 }

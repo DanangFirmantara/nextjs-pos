@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MasterMenuRepository extends JpaRepository<MasterMenu, Integer> {
+	MasterMenu findTopByOrderByIdDesc();
+	java.util.List<MasterMenu> findAllByBisDeleteFalse(org.springframework.data.domain.Sort sort);
 }

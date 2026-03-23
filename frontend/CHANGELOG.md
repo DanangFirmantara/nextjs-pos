@@ -18,15 +18,24 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 ### Removed (Dihapus)
 -
 
----
-
-## [1.2.0] - 2026-03-18
-## [Unreleased]
-
+## [1.3.0] - 2026-03-24
 ### Added (Ditambahkan)
-- 
+- Implementasi penuh Redux Toolkit dan RTK Query untuk manajemen state global dan API caching.
+- Penambahan store Redux di src/store/index.ts dan provider ReduxProvider di src/store/provider.tsx.
+- Penambahan API slice untuk master referensi, barang, dan transaksi (src/store/api/masterReferensiApi.ts, barangApi.ts, trxMenusApi.ts).
+- Penambahan custom hook useMasterReferensi untuk fetch data referensi.
+- Penambahan komponen Toast untuk notifikasi aksi.
+- Update dokumentasi: REDUX_SETUP.md, REDUX_QUICKSTART.md, REDUX_FINAL_SUMMARY.md, IMPLEMENTATION_CHECKLIST.md, SETUP_COMPLETE.md.
 
 ### Changed (Diubah)
+- Refaktor komponen utama (Navbar, Sidebar, RingkasanPembayaran, Toast) agar terintegrasi dengan Redux dan API hooks.
+- Penyesuaian arsitektur agar scalable dan maintainable (modularisasi API, hooks, context).
+
+### Fixed (Diperbaiki)
+- Perbaikan minor pada integrasi API dan notifikasi.
+
+### Removed (Dihapus)
+- Kode legacy terkait state lokal yang sudah digantikan Redux Toolkit.
 - 
 
 ### Fixed (Diperbaiki)
@@ -36,7 +45,7 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 - 
 
 
-## [1.1.0] - 2026-03-18
+## [1.2.0] - 2026-03-18
 ### Added (Ditambahkan)
 - Context global untuk kasir (KasirContext) agar ListMenu dan RingkasanPembayaran saling terhubung
 - Toast notifikasi untuk aksi tambah/edit/hapus barang dan kasir

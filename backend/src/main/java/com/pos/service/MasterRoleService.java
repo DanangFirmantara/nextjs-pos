@@ -5,6 +5,7 @@ import com.pos.repository.MasterRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class MasterRoleService {
@@ -12,7 +13,7 @@ public class MasterRoleService {
     private MasterRoleRepository repository;
 
     public List<MasterRole> getAll() {
-        return repository.findAll();
+        return repository.findAllByBisDeleteFalse(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public MasterRole getById(Integer id) {

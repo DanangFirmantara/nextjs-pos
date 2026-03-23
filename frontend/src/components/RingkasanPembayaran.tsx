@@ -1,9 +1,27 @@
 ﻿"use client";
 
-import { useState } from "react";
-import { Trash2, Printer, Minus, Plus, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useGetReferensiByTypeQuery } from "@/store/api/masterReferensiApi";
+import { useCreateTrxMenuWithDetailsMutation } from "@/store/api/trxMenusApi";
+import { Trash2, Printer, Minus, Plus, X, Loader } from "lucide-react";
 import { Button } from "./ui";
 import { useKasir } from "./KasirContext";
+import Toast from "./Toast";
+
+// Utility functions untuk format input harga dengan separator ribuan
+function formatNumberInput(value: string): string {
+  // Strip semua non-digit characters
+  const numericValue = value.replace(/\D/g, "");
+  if (!numericValue) return "";
+  // Format dengan separator ribuan (Indonesian format: dot for thousands)
+  return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function parseNumberInput(value: string): number {
+  // Remove all non-digit characters and convert to number
+  const numericValue = value.replace(/\D/g, "");
+  return numericValue ? Number(numericValue) : 0;
+}
 
 function formatPrice(price: number) {
   return (
@@ -20,9 +38,15 @@ export default function RingkasanPembayaran() {
   } = useKasir();
   const [diskon, setDiskon] = useState(0);
   const [ppnEnabled, setPpnEnabled] = useState(true);
-  const [selectedPayment, setSelectedPayment] = useState<string | null>("tunai");
+  // Ambil data metode pembayaran dari referensi
+  const { data: metodePembayaran = [] } = useGetReferensiByTypeQuery("Pembayaran");
+  const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [bayar, setBayar] = useState(0);
+  const [toastMessage, setToastMessage] = useState<{ type: "success" | "error" | "loading"; message: string } | null>(null);
+
+  // Mutation untuk submit transaksi
+  const [createTrxMenuWithDetails, { isLoading: isSubmittingTransaction }] = useCreateTrxMenuWithDetailsMutation();
 
   const subTotal = cart.reduce((sum, item) => sum + item.product.price * item.qty, 0);
   const discountAmount = (subTotal * diskon) / 100;
@@ -30,8 +54,78 @@ export default function RingkasanPembayaran() {
   const ppn = ppnEnabled ? Math.round(subtotalAfterDiscount * 0.11) : 0;
   const totalPayment = subtotalAfterDiscount + ppn;
 
+  // Hitung jumlah kembalian
+  const kembalian = bayar > totalPayment ? bayar - totalPayment : 0;
+  
+  // Cari apakah metode tunai dipilih
+  const isPaymentMethodTunai = selectedPayment && metodePembayaran.some(
+    (m) => String(m.id) === selectedPayment && (m.vname?.toLowerCase() === "tunai" || m.vdesc?.toLowerCase() === "tunai")
+  );
+
+  // Sinkronisasi bayar dengan totalPayment ketika modal terbuka, totalPayment berubah, atau metode pembayaran berubah
+  useEffect(() => {
+    if (modalOpen) {
+      setBayar(totalPayment);
+    }
+    // Jika metode pembayaran bukan tunai, bayar otomatis = totalPayment
+    if (selectedPayment && !isPaymentMethodTunai) {
+      setBayar(totalPayment);
+    }
+  }, [modalOpen, totalPayment, selectedPayment, isPaymentMethodTunai]);
+
   // For modal quick pay
-  const quickAmounts = [50000, 100000, 150000, 200000];
+  const quickAmounts = [10000, 20000, 50000, 100000, 150000, 200000];
+
+  // Prepare transaction data dan submit
+  const handleSubmitTransaction = async (withPrint: boolean) => {
+    try {
+      const trxMenuDetail = cart.map((item) => ({
+        imenuId: item.product.id,
+        qty: item.qty,
+        totalTransaksi: item.product.price * item.qty,
+      }));
+
+      const transactionData = {
+        itotalItem: cart.length,
+        totalTransaksi: totalPayment,
+        imetodePembayaran: selectedPayment ? Number(selectedPayment) : null,
+        ipic: 4, // Default PIC, bisa disesuaikan dengan user yang login
+        createdBy: 4,
+        trxMenuDetail,
+      };
+
+      // Show loading toast first
+      setToastMessage({
+        type: "loading",
+        message: "Mohon Tunggu...",
+      });
+
+      // Submit ke API
+      const response = await createTrxMenuWithDetails(transactionData).unwrap();
+      
+      // Tampilkan notifikasi sukses
+      setToastMessage({
+        type: "success",
+        message: "Pesanan telah ditambahkan",
+      });
+      
+      // Close modal dan clear cart
+      setModalOpen(false);
+      clearCart();
+      
+      // Hide toast setelah 3 detik
+      setTimeout(() => setToastMessage(null), 3000);
+      
+    } catch (error: any) {
+      setToastMessage({
+        type: "error",
+        message: error?.data?.message || "Gagal menyimpan pesanan. Silakan coba lagi.",
+      });
+      
+      // Hide toast setelah 3 detik
+      setTimeout(() => setToastMessage(null), 3000);
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -110,31 +204,22 @@ export default function RingkasanPembayaran() {
       {/* Payment Methods */}
       <div className="mb-4">
         <h3 className="text-xs font-semibold text-gray-600 mb-2">Metode pembayaran:</h3>
-        <div className="flex gap-2">
-          <Button
-            variant={selectedPayment === "tunai" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setSelectedPayment("tunai")}
-            className="flex-1"
-          >
-            Tunai
-          </Button>
-          <Button
-            variant={selectedPayment === "qris" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setSelectedPayment("qris")}
-            className="flex-1"
-          >
-            QRIS
-          </Button>
-          <Button
-            variant={selectedPayment === "debit" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setSelectedPayment("debit")}
-            className="flex-1"
-          >
-            Debit
-          </Button>
+        <div className="flex gap-2 flex-wrap">
+          {metodePembayaran.length === 0 ? (
+            <span className="text-xs text-gray-400">Memuat...</span>
+          ) : (
+            metodePembayaran.map((m) => (
+              <Button
+                key={m.id}
+                variant={selectedPayment === String(m.id) ? "primary" : "ghost"}
+                size="sm"
+                onClick={() => setSelectedPayment(String(m.id))}
+                className="flex-1"
+              >
+                {m.vname}
+              </Button>
+            ))
+          )}
         </div>
       </div>
 
@@ -145,7 +230,7 @@ export default function RingkasanPembayaran() {
           size="md"
           className="w-full flex items-center justify-center gap-2"
           disabled={cart.length === 0}
-          onClick={() => { setModalOpen(true); setBayar(totalPayment); }}
+          onClick={() => setModalOpen(true)}
         >
           <Printer className="w-4 h-4" />
           Bayar (F9)
@@ -174,52 +259,99 @@ export default function RingkasanPembayaran() {
               <span className="text-xl font-bold text-blue-700">{formatPrice(totalPayment)}</span>
             </div>
             <div className="mb-4">
-              <div className="flex gap-2 mb-2">
-                <Button
-                  variant={selectedPayment === "tunai" ? "primary" : "ghost"}
-                  size="sm"
-                  onClick={() => setSelectedPayment("tunai")}
-                  className="flex-1"
-                >
-                  Tunai
-                </Button>
-                <Button
-                  variant={selectedPayment === "qris" ? "primary" : "ghost"}
-                  size="sm"
-                  onClick={() => setSelectedPayment("qris")}
-                  className="flex-1"
-                >
-                  QRIS
-                </Button>
-                <Button
-                  variant={selectedPayment === "debit" ? "primary" : "ghost"}
-                  size="sm"
-                  onClick={() => setSelectedPayment("debit")}
-                  className="flex-1"
-                >
-                  Debit
-                </Button>
+              <div className="flex gap-2 mb-2 flex-wrap">
+                {metodePembayaran.length === 0 ? (
+                  <span className="text-xs text-gray-400">Memuat metode pembayaran...</span>
+                ) : (
+                  metodePembayaran.map((m) => (
+                    <Button
+                      key={m.id}
+                      variant={selectedPayment === String(m.id) ? "primary" : "ghost"}
+                      size="sm"
+                      onClick={() => setSelectedPayment(String(m.id))}
+                      className="flex-1"
+                    >
+                      {m.vname}
+                    </Button>
+                  ))
+                )}
               </div>
               <label className="block text-xs text-gray-600 mb-1">Jumlah bayar</label>
               <input
-                type="number"
-                className="w-full border border-gray-300 rounded px-3 py-2 text-lg font-semibold mb-2"
-                value={bayar}
-                min={0}
-                onChange={e => setBayar(Number(e.target.value))}
+                type="text"
+                inputMode="numeric"
+                disabled={!isPaymentMethodTunai}
+                className={`w-full border rounded px-3 py-2 text-lg font-semibold mb-2 ${
+                  isPaymentMethodTunai
+                    ? "border-gray-300"
+                    : "border-gray-300 bg-gray-100 text-gray-700 cursor-not-allowed"
+                }`}
+                value={formatNumberInput(String(bayar))}
+                onChange={e => isPaymentMethodTunai && setBayar(parseNumberInput(e.target.value))}
               />
-              <div className="flex gap-2 mb-2">
+              {isPaymentMethodTunai && (
+                <>
+                  <label className="block text-xs text-gray-600 mb-1">Jumlah kembalian (Rp)</label>
+                  <input
+                    type="text"
+                    disabled
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-lg font-semibold mb-2 bg-gray-100 text-gray-700 cursor-not-allowed"
+                    value={formatPrice(kembalian)}
+                  />
+                </>
+              )}
+              <div className="flex flex-wrap gap-2 mb-2">
                 {quickAmounts.map((amt) => (
-                  <Button key={amt} size="sm" variant="secondary" onClick={() => setBayar(amt)}>{formatPrice(amt)}</Button>
+                  <Button key={amt} size="sm" variant="secondary" disabled={!isPaymentMethodTunai} onClick={() => setBayar(amt)}>{formatPrice(amt)}</Button>
                 ))}
               </div>
             </div>
             <div className="flex gap-2 mt-4">
-              <Button className="flex-1" variant="primary" onClick={() => { setModalOpen(false); clearCart(); alert("Pembayaran berhasil dan cetak resi!"); }}>Simpan & Cetak resi</Button>
-              <Button className="flex-1" variant="secondary" onClick={() => { setModalOpen(false); clearCart(); alert("Pembayaran berhasil tanpa cetak resi!"); }}>Simpan tanpa cetak resi</Button>
+              <Button 
+                className="flex-1" 
+                variant="primary" 
+                disabled={isSubmittingTransaction}
+                onClick={() => handleSubmitTransaction(true)}
+              >
+                {isSubmittingTransaction ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin mr-2" />
+                    Memproses...
+                  </>
+                ) : (
+                  <>
+                    Simpan & Cetak resi
+                  </>
+                )}
+              </Button>
+              <Button 
+                className="flex-1" 
+                variant="secondary" 
+                disabled={isSubmittingTransaction}
+                onClick={() => handleSubmitTransaction(false)}
+              >
+                {isSubmittingTransaction ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin mr-2" />
+                    Memproses...
+                  </>
+                ) : (
+                  "Simpan tanpa cetak resi"
+                )}
+              </Button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <Toast
+          message={toastMessage.message}
+          type={toastMessage.type}
+          duration={3000}
+          onClose={() => setToastMessage(null)}
+        />
       )}
     </div>
   );

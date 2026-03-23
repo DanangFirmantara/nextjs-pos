@@ -1,5 +1,5 @@
 ﻿import { Pencil, Trash2 } from "lucide-react";
-import { Barang, formatRupiah } from "./types";
+import { Barang, formatRupiah, KATEGORI_OPTIONS } from "./types";
 
 interface Props {
   filtered: Barang[];
@@ -36,20 +36,20 @@ export default function BarangTable({ filtered, total, onEdit, onDelete }: Props
               </tr>
             ) : (
               filtered.map((b) => {
-                const isBelowMin = b.stok < b.minStok;
+                const isBelowMin = b.istock < b.iminStock;
                 return (
                   <tr key={b.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-700 font-medium whitespace-nowrap">{b.kode}</td>
-                    <td className="px-4 py-3 text-gray-700">{b.nama}</td>
-                    <td className="px-4 py-3 text-gray-600">{b.kategori}</td>
-                    <td className="px-4 py-3 text-gray-600">{b.satuan}</td>
+                    <td className="px-4 py-3 text-gray-700 font-medium whitespace-nowrap">{b.kodeBarang}</td>
+                    <td className="px-4 py-3 text-gray-700">{b.vname}</td>
+                    <td className="px-4 py-3 text-gray-600">{KATEGORI_OPTIONS[b.ikategori]}</td>
+                    <td className="px-4 py-3 text-gray-600">{b.ijenisSatuan}</td>
                     <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{formatRupiah(b.hargaBeli)}</td>
                     <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{formatRupiah(b.hargaJual)}</td>
-                    <td className={`px-4 py-3 font-semibold whitespace-nowrap ${isBelowMin ? "text-red-500" : "text-gray-700"}`}>{b.stok}</td>
-                    <td className="px-4 py-3 text-gray-600">{b.minStok}</td>
+                    <td className={`px-4 py-3 font-semibold whitespace-nowrap ${isBelowMin ? "text-red-500" : "text-gray-700"}`}>{b.istock}</td>
+                    <td className="px-4 py-3 text-gray-600">{b.iminStock}</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${b.status === "Aktif" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"}`}>
-                        {b.status}
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${b.bis_active ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"}`}>
+                        {b.bis_active ? "Aktif" : "Tidak Aktif"}
                       </span>
                     </td>
                     <td className="px-4 py-3">

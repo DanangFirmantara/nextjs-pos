@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TrxMenuDetailRepository extends JpaRepository<TrxMenuDetail, Integer> {
+	java.util.List<TrxMenuDetail> findAllByBisDeleteFalse(org.springframework.data.domain.Sort sort);
 }

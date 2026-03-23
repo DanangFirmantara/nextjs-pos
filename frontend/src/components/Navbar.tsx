@@ -4,9 +4,13 @@ import { Bell, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState<Date | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    setTime(new Date());
+    
     const interval = setInterval(() => {
       setTime(new Date());
     }, 1000);
@@ -28,12 +32,12 @@ export default function Navbar() {
         <div className="flex flex-col items-end">
           <span className="text-xs text-gray-500">Waktu</span>
           <span className="font-medium text-sm text-gray-700">
-            {time.toLocaleString("en-GB", {
+            {isMounted && time ? time.toLocaleString("en-GB", {
               hour: "2-digit",
               minute: "2-digit",
               second: "2-digit",
               hour12: false
-            })}
+            }) : "--:--:--"}
           </span>
         </div>
         <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
