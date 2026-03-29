@@ -13,6 +13,7 @@ import {
   Moon,
   ChevronRight,
   ChevronLeft,
+  File
 } from "lucide-react";
 import { Button } from "./ui";
 import { usePathname, useRouter } from 'next/navigation';
@@ -23,6 +24,7 @@ const MENU_ITEMS = [
   { icon: History, label: "Riwayat Transaksi", path: "/riwayat-transaksi" },
   { icon: BarChart3, label: "Laporan", path: "/laporan" },
   { icon: DollarSign, label: "Pengeluaran", path: "/pengeluaran" },
+  { icon: File, label: "Template", path: "/template" },
   { icon: Settings, label: "Pengatuaran", path: "/pengaturan" },
 ];
 

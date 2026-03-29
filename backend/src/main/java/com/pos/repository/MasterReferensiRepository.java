@@ -10,7 +10,9 @@ import java.util.List;
 
 @Repository
 public interface MasterReferensiRepository extends JpaRepository<MasterReferensi, Integer> {
-    @Query("SELECT new com.pos.dto.MasterReferensiDto(mr.id, mr.vname) FROM MasterReferensi mr WHERE mr.vdesc = :vdesc and mr.bisDelete = false")
+    @Query("""
+        SELECT new com.pos.dto.MasterReferensiDto(mr.id, mr.vname) FROM MasterReferensi mr WHERE (:vdesc IS NULL OR mr.vdesc = :vdesc) and mr.bisDelete = false
+    """)
     List<MasterReferensiDto> findByVdesc(@Param("vdesc") String vdesc);
     java.util.List<MasterReferensi> findAllByBisDeleteFalse(org.springframework.data.domain.Sort sort);
 }
