@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useState, useRef } from 'react';
-import { FileText, Upload, Trash2, Download } from 'lucide-react';
+import { FileText, Upload, Trash2, Download, FileDown } from 'lucide-react';
 import mammoth from 'mammoth';
 import DocxTemplater from 'docxtemplater';
 import PizZip from 'pizzip';
@@ -17,6 +17,7 @@ export default function TemplateContent() {
   const [docxFile, setDocxFile] = useState<ArrayBuffer | null>(null);
   const [variables, setVariables] = useState<Variable[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Extract variables from text
@@ -85,29 +86,38 @@ export default function TemplateContent() {
     setVariables(updated);
   };
 
+  const generateFilledDocx = (): Blob => {
+    if (!docxFile) throw new Error('No document loaded');
+
+    // Create a copy of the ArrayBuffer
+    const zip = new PizZip(docxFile);
+    const doc = new DocxTemplater(zip);
+
+    // Create object with variables for docxtemplater
+    const data: Record<string, string> = {};
+    variables.forEach(variable => {
+      data[variable.name] = variable.value || `{${variable.name}}`;
+    });
+
+    // Set the data and render
+    doc.setData(data);
+    doc.render();
+
+    // Generate the document
+    const blob = doc.getZip().generate({
+      type: 'blob',
+      mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    });
+
+    return blob;
+  };
+
   const handleGenerateDocx = async () => {
     if (!docxFile) return;
 
     try {
-      // Create a copy of the ArrayBuffer
-      const zip = new PizZip(docxFile);
-      const doc = new DocxTemplater(zip);
-
-      // Create object with variables for docxtemplater
-      const data: Record<string, string> = {};
-      variables.forEach(variable => {
-        data[variable.name] = variable.value || `{${variable.name}}`;
-      });
-
-      // Set the data and render
-      doc.setData(data);
-      doc.render();
-
-      // Generate the document
-      const blob = doc.getZip().generate({
-        type: 'blob',
-        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      });
+      setIsGenerating(true);
+      const blob = generateFilledDocx();
 
       // Create download link
       const url = URL.createObjectURL(blob);
@@ -124,6 +134,54 @@ export default function TemplateContent() {
     } catch (error) {
       setUploadStatus('Error: Gagal membuat file DOCX');
       console.error('Error generating DOCX:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleGeneratePDF = async () => {
+    if (!docxFile) return;
+
+    try {
+      setIsGenerating(true);
+      const blob = generateFilledDocx();
+      
+      // Create FormData with DOCX blob
+      const formData = new FormData();
+      const docName = fileName?.replace('.docx', '') || 'document';
+      formData.append('file', blob, `${docName}.docx`);
+
+      // Call API endpoint for server-side conversion
+      const response = await fetch('/api/convert-pdf', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to convert to PDF');
+      }
+
+      // Get PDF blob from response
+      const pdfBlob = await response.blob();
+
+      // Create download link
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${docName}_filled.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setUploadStatus('✅ File PDF berhasil dibuat dan diunduh!');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Gagal membuat file PDF';
+      setUploadStatus(`⚠️ ${errorMsg}`);
+      console.error('Error generating PDF:', error);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -142,7 +200,7 @@ export default function TemplateContent() {
       <div className="flex items-start justify-between mb-5">
         <div>
           <h2 className="text-xl font-bold text-gray-800">Upload & Isi Dokumen</h2>
-          <p className="text-sm text-gray-500 mt-0.5">Upload file dokumen Word dan isi variabel untuk generate dokumen terisi</p>
+          <p className="text-sm text-gray-500 mt-0.5">Upload file dokumen Word dan isi variabel untuk generate dokumen terisi (DOCX atau PDF)</p>
         </div>
       </div>
 
@@ -212,6 +270,7 @@ export default function TemplateContent() {
                     onChange={(e) => handleVariableChange(index, e.target.value)}
                     placeholder={`Masukkan nilai untuk ${variable.name}`}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={isGenerating}
                   />
                 </div>
               ))}
@@ -221,18 +280,29 @@ export default function TemplateContent() {
 
         {/* Action Buttons */}
         {fileName && (
-          <div className="flex gap-3 pt-4 border-t border-gray-200">
+          <div className="flex gap-3 pt-4 border-t border-gray-200 flex-wrap">
             {variables.length > 0 && (
-              <button
-                onClick={handleGenerateDocx}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              >
-                <Download className="w-4 h-4" /> Generate DOCX
-              </button>
+              <>
+                <button
+                  onClick={handleGenerateDocx}
+                  disabled={isGenerating}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Download className="w-4 h-4" /> Generate DOCX
+                </button>
+                <button
+                  onClick={handleGeneratePDF}
+                  disabled={isGenerating}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  <FileDown className="w-4 h-4" /> Generate PDF
+                </button>
+              </>
             )}
             <button
               onClick={handleClear}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              disabled={isGenerating}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
             >
               <Trash2 className="w-4 h-4" /> Bersihkan
             </button>
@@ -242,7 +312,7 @@ export default function TemplateContent() {
         {/* Info Box */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-700">
-            <strong>💡 Info:</strong> File DOCX yang diunduh akan mempertahankan semua formatting dan styling asli dari dokumen template. Anda dapat membuka dan edit file DOCX tersebut sesuai kebutuhan.
+            <strong>💡 Info:</strong> Anda dapat mengunduh dokumen dalam format DOCX (dengan formatting lengkap) atau PDF (untuk print/share). Keduanya akan mempertahankan styling original template.
           </p>
         </div>
       </div>
