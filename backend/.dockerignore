@@ -1,0 +1,11 @@
+target/
+.git/
+.gitignore
+.env
+.env.local
+node_modules/
+.vscode/
+.idea/
+*.log
+README.md
+CHANGELOG.md
